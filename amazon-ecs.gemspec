@@ -31,4 +31,7 @@ Gem::Specification.new do |gem|
     gem.add_dependency("nokogiri", "~> 1.4")
     gem.add_dependency("ruby-hmac", "~> 0.3")
   end
+  gem.add_development_dependency "rspec"
+  gem.add_development_dependency 'fakeweb'
+  gem.add_development_dependency 'vcr'
 end
