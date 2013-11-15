@@ -23,7 +23,7 @@ module Amazon
           if elem.children.length == 1 && elem.children.first.text?
             self.__send__("#{name}=", elem.inner_html)
           else
-            klass = Object.const_defined?(elem.name.to_sym) ? Object.const_get(elem.name, Class.new(Amazon::Item)) : Object.const_set(elem.name, Class.new(Amazon::Item))
+            klass = Amazon.const_defined?(elem.name.to_sym) ? Amazon.const_get(elem.name.to_sym, Class.new(Amazon::Item)) : Amazon.const_set(elem.name.to_sym, Class.new(Amazon::Item))
             self.__send__("#{name}=", klass.new(elem))
           end
         end
