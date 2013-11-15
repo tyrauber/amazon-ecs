@@ -23,8 +23,24 @@ module Amazon
           if elem.children.length == 1 && elem.children.first.text?
             self.__send__("#{name}=", elem.inner_html)
           else
-            klass = Amazon.const_defined?(elem.name.to_sym) ? Amazon.const_get(elem.name.to_sym, Class.new(Amazon::Item)) : Amazon.const_set(elem.name.to_sym, Class.new(Amazon::Item))
-            self.__send__("#{name}=", klass.new(elem))
+            klass_name= "Item#{elem.name.gsub(/s$/, '')}".to_sym
+            klass = Amazon.const_defined?(klass_name) ? Amazon.const_get(klass_name, Class.new(Amazon::Item)) : Amazon.const_set(klass_name, Class.new(Amazon::Item))
+            obj = klass.new()
+            objs = []
+            elem.children.each do |child|
+              if child.children.length == 1
+                child_name = child.name.to_underscore
+                obj.class.__send__(:attr_accessor, child_name) unless obj.instance_variables.include?("@#{child_name}".to_sym)
+                obj.__send__("#{child_name}=", child.inner_html)
+              else
+                objs.push klass.new(child)
+              end
+            end
+            if objs.empty?
+              self.__send__("#{name}=", obj)
+            else
+              self.__send__("#{name}=", objs)
+            end
           end
         end
       end

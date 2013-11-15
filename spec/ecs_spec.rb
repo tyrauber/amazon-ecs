@@ -42,8 +42,16 @@ describe Amazon::Ecs do
         item.attributes.each do |key|
           item.should respond_to(key.to_sym)
           child = item.send(key)
-          unless child.is_a?(String)
-            child.should respond_to(:attributes)
+          if !child.is_a?(String)
+            if !child.is_a?(Array)
+              child.should respond_to(:attributes)
+            else
+              child.each do |grandchild|
+                if !grandchild.is_a?(String)
+                  grandchild.should respond_to(:attributes)
+                end
+              end
+            end
           end
         end
       end
